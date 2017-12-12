@@ -1,0 +1,18 @@
+{
+  "name": "proxmise",
+  "version": "1.0.0",
+  "description": "Proxied Promises, create async getters for arbitrary object paths",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "proxy",
+    "promise",
+    "proxied",
+    "async",
+    "getter"
+  ],
+  "author": "Matt Bell <mappum@gmail.com>",
+  "license": "MIT"
+}
