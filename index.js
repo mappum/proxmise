@@ -1,4 +1,4 @@
-module.exports = function proxmise (get, path = []) {
+module.exports = function proxmise (get, set, path = []) {
   if (typeof get !== 'function') {
     throw Error('Must specify a "get" handler')
   }
@@ -36,7 +36,15 @@ module.exports = function proxmise (get, path = []) {
       if (key === 'catch') return wrap(promise.catch)
 
       // recursively wrap props
-      return proxmise(get, path.concat(key))
+      return proxmise(get, set, path.concat(key))
+    },
+
+    set () {
+      throw Error('This object is read-only')
+    },
+
+    deleteProperty () {
+      throw Error('This object is read-only')
     }
   })
 }

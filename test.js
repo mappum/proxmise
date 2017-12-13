@@ -118,3 +118,27 @@ test('async getter reject', (t) => {
     })
   })
 })
+
+test('mutations should error', (t) => {
+  let p = proxmise(() => {})
+
+  t.test('set', (t) => {
+    try {
+      p.foo = 'bar'
+      t.fail('should have thrown')
+    } catch (err) {
+      t.equal(err.message, 'This object is read-only')
+      t.end()
+    }
+  })
+
+  t.test('delete', (t) => {
+    try {
+      delete p.foo
+      t.fail('should have thrown')
+    } catch (err) {
+      t.equal(err.message, 'This object is read-only')
+      t.end()
+    }
+  })
+})
