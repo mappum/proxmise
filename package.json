@@ -4,7 +4,7 @@
   "description": "Proxied Promises, create async getters for arbitrary object paths",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "standard && nyc tape test.js"
   },
   "keywords": [
     "proxy",
@@ -14,5 +14,10 @@
     "getter"
   ],
   "author": "Matt Bell <mappum@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "nyc": "^11.3.0",
+    "standard": "^10.0.3",
+    "tape": "^4.8.0"
+  }
 }

@@ -4,33 +4,36 @@ module.exports = function proxmise (get, path = []) {
   }
 
   // create Promise and pull out resolve/reject funcs
-  let resolve, reject
-  let promise = new Promise((rs, rj) => {
-    resolve = rs
-    reject = rj
+  let funcs
+  let promise = new Promise((resolve, reject) => {
+    funcs = { resolve, reject }
   })
 
-  // use an overriden 'then' to detect if a property is
+  // override 'then' and 'catch' to detect if a property is
   // the one the user wants to access
-  function then (next) {
-    // run access handler
-    let getProm = get(path, resolve, reject)
+  function wrap (method) {
+    return function (...args) {
+      // run getter
+      let res = get(path, funcs.resolve, funcs.reject)
 
-    // handler returned Promise, we should hook it up
-    // to our Proxmise
-    if (getProm instanceof Promise) {
-      getProm.then(resolve)
-      getProm.catch(reject)
+      // if getter returned a Promise, hook it up to the
+      // proxmise
+      if (res instanceof Promise) {
+        res.then(funcs.resolve, funcs.reject)
+      }
+
+      // call the actual Promise method (then/catch)
+      // to attach the user's handler
+      return method.call(promise, ...args)
     }
-
-    return promise.then(next)
   }
 
-  // return a wrapped Promise for this property
+  // return proxied Promise
   return new Proxy(promise, {
     get (obj, key) {
-      // use overriden 'then' func
-      if (key === 'then') return then
+      // use overriden Promise methods
+      if (key === 'then') return wrap(promise.then)
+      if (key === 'catch') return wrap(promise.catch)
 
       // recursively wrap props
       return proxmise(get, path.concat(key))
