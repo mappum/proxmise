@@ -27,11 +27,20 @@ test('sync getter resolve', (t) => {
     })
   })
 
+  t.test('access "then"/"catch" objects', (t) => {
+    let promise = p.then.catch.abc
+    promise.then((path) => {
+      t.deepEqual(path, [ 'then', 'catch', 'abc' ])
+      t.equal(getterCallCount, 2)
+      t.end()
+    })
+  })
+
   t.test('access root', (t) => {
     let promise = p
     promise.then((path) => {
       t.deepEqual(path, [])
-      t.equal(getterCallCount, 2)
+      t.equal(getterCallCount, 3)
       t.end()
     })
   })
@@ -140,5 +149,54 @@ test('mutations should error', (t) => {
       t.equal(err.message, 'This object is read-only')
       t.end()
     }
+  })
+})
+
+test('mutations should error', (t) => {
+  let p = proxmise(() => {})
+
+  t.test('set', (t) => {
+    try {
+      p.foo = 'bar'
+      t.fail('should have thrown')
+    } catch (err) {
+      t.equal(err.message, 'This object is read-only')
+      t.end()
+    }
+  })
+
+  t.test('delete', (t) => {
+    try {
+      delete p.foo
+      t.fail('should have thrown')
+    } catch (err) {
+      t.equal(err.message, 'This object is read-only')
+      t.end()
+    }
+  })
+})
+
+test('calls', (t) => {
+  t.test('calls error when no call handler is specified', (t) => {
+    let p = proxmise(() => {})
+    try {
+      p.foo()
+      t.fail('should have thrown')
+    } catch (err) {
+      t.equal(err.message, 'Cannot call property')
+      t.end()
+    }
+  })
+
+  t.test('call', (t) => {
+    t.plan(2)
+    let p = proxmise(
+      () => {},
+      (path, ...args) => {
+        t.deepEqual(path, [ 'foo', 'bar' ])
+        t.deepEqual(args, [ 1, 2, 3 ])
+      }
+    )
+    p.foo.bar(1, 2, 3)
   })
 })
