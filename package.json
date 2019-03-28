@@ -1,6 +1,6 @@
 {
   "name": "proxmise",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Proxied Promises, create async getters for arbitrary object paths",
   "main": "index.js",
   "scripts": {
